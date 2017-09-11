@@ -16,6 +16,11 @@ function rndOut() {
 
 app.use(helmet());
 
+app.get('/', function (req, res) {
+    res.send('Welcome to jirrick\'s quidoServer!');
+})
+
+
 app.get('/listen', function (req, res) {
     console.log(req.originalUrl);
     var outs = rndOut();
