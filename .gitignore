@@ -57,7 +57,6 @@ typings/
 # dotenv environment variables file
 .env
 
-<<<<<<< HEAD
 package-lock.json
 
 # do not commit real config
@@ -65,5 +64,3 @@ config.js
 
 # vscode launch config
 .vscode/launch.json
-=======
->>>>>>> f4f0b26576dd12014871e0507a350c3d9f62bf92
