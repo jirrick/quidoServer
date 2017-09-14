@@ -8,6 +8,6 @@ module.exports = function(app) {
     app.route('/listen')
         .get(quido.listen);  
 
-//    app.route('/view')
-//        .get(quido.viewAll);
+    app.route('/view')
+        .get(quido.viewAll);
 };

@@ -10,7 +10,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.18.1",
     "express": "^4.15.4",
     "helmet": "^3.8.1",
     "mongoose": "^4.11.11"
