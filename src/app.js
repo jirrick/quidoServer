@@ -1,35 +1,27 @@
 'use strict';
 const express = require('express'),
     helmet = require('helmet'),
+    mongoose = require('mongoose'),
+    config = require('./config'),
+    bodyParser = require('body-parser'),
+    routes = require('./routes/quidoRoutes'),
+    models= require('./models/quidoModel'),
     app = express(),
-    environment = process.env.NODE_ENV || 'development',
     port = process.env.PORT || 3001;
 
-function rndOut() {
-    var text = "";
-    var possible = "01x";
-    
-    for (var i = 0; i < 8; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    
-    return text;
-    }
+//Set up default mongoose connection
+mongoose.Promise = global.Promise;
+mongoose.connect(config.mongoDB, {useMongoClient: true});
 
+//Set up Helmet
 app.use(helmet());
 
-app.get('/', function (req, res) {
-    res.send('Welcome to jirrick\'s quidoServer @ ' + environment);
-})
+//Set up body parser
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-
-app.get('/listen', function (req, res) {
-    console.log(req.originalUrl);
-    var outs = rndOut();
-    res.set('Content-Type', 'text/xml');
-    res.send('<?xml version="1.0" encoding="ISO-8859-1"?><root><set outs="' + outs + '"/></root>');
-})
-
-
+//Set up routes and start app
+routes(app);
 app.listen(port);
 
 console.log('quido server started on: ' + port);
