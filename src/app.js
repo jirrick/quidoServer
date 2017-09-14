@@ -2,6 +2,7 @@
 const express = require('express'),
     helmet = require('helmet'),
     app = express(),
+    environment = process.env.NODE_ENV || 'development',
     port = process.env.PORT || 3001;
 
 function rndOut() {
@@ -17,7 +18,7 @@ function rndOut() {
 app.use(helmet());
 
 app.get('/', function (req, res) {
-    res.send('Welcome to jirrick\'s quidoServer!');
+    res.send('Welcome to jirrick\'s quidoServer @ ' + environment);
 })
 
 
