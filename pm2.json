@@ -1,0 +1,9 @@
+{
+  "apps": [{
+    "name": "quidoServer",
+    "script": "src/app.js",
+    "env": {
+      "production": true
+    }
+  }]
+}

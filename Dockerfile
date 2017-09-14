@@ -1,17 +1,18 @@
-FROM node:boron
+FROM keymetrics/pm2:6
 
 # Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
+# Bundle APP files
+COPY src src/
 COPY package.json .
-# For npm@5 or later, copy package-lock.json as well
-# COPY package.json package-lock.json ./
+COPY pm2.json .
 
-RUN npm install
+# Install app dependencies
+ENV NPM_CONFIG_LOGLEVEL warn
+RUN npm install --production
 
-# Bundle app source
-COPY . .
+# Show current folder structure in logs
+#RUN ls -al -R
 
-EXPOSE 3001
-CMD [ "npm", "start" ]
+CMD [ "pm2-docker", "start", "pm2.json" ]
