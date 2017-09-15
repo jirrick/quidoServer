@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose'),
     Logs = mongoose.model('Logs'),
-    util = require('util'),
+    config = require('../config'),
     environment = process.env.NODE_ENV || 'development';
 
 //Index page
@@ -14,13 +14,19 @@ exports.main = function (req, res) {
 exports.listen = function (req, res) {
     //console.log(req.originalUrl);
 
-    //do different stuff for different board
-    if (req.query.name === 'LEVY')
-        levy(req, res);
-    else if (req.query.name === 'PRAVY')
-        pravy(req, res);
+    //verify board
+    const req_name = req.query.name;
+    const req_mac = req.query.mac;
+    const found = config.boards.find(board => board.name === req_name && board.mac === req_mac);
+    if (found != null) {
+        //do different stuff for different board
+        if (req_name === 'LEVY')
+            levy(req, res);
+        else if (req_name === 'PRAVY')
+            pravy(req, res);
+    }
     else 
-        res.status(400).send('Invalid request!');
+        res.status(400).send('Unknown board!');
 };
 
 //View page
@@ -45,7 +51,7 @@ function rndOut() {
 }
 
 //Handle 'LEVY' board
-function levy(req, res){
+function levy(req, res) {
     //Parse data from request into object
     const parsed = new Object();
     parsed.name = req.query.name;
@@ -67,7 +73,7 @@ function levy(req, res){
 }
 
 //Handle 'PRAVY' board
-function pravy(req, res){
+function pravy(req, res) {
     //Send reply - do random shit
     const outs = rndOut();
     res.set('Content-Type', 'text/xml');
