@@ -1,7 +1,7 @@
 FROM keymetrics/pm2:6
 
 # Create app directory
-WORKDIR /usr/src/app
+WORKDIR /usr/src/quido
 
 # Bundle APP files
 COPY src src/
