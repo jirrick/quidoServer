@@ -18,6 +18,7 @@ exports.listen = function (req, res) {
     const req_name = req.query.name;
     const req_mac = req.query.mac;
     const found = config.boards.find(board => board.name === req_name && board.mac === req_mac);
+
     if (found != null) {
         //do different stuff for different board
         if (req_name === 'LEVY')
@@ -55,7 +56,6 @@ function levy(req, res) {
     //Parse data from request into object
     const parsed = new Object();
     parsed.name = req.query.name;
-    parsed.mac = req.query.mac;
     parsed.temp = req.query.tempV;
     parsed.timestamp = Date.now();
 

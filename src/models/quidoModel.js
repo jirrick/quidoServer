@@ -1,12 +1,14 @@
 'use strict';
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose'),
+    shortid = require('shortid'),
+    Schema = mongoose.Schema;
 
 const LogSchema = new Schema({
-    name: {
-        type: String
+    _id: {
+        type: String,
+        default: shortid.generate
     },
-    mac: {
+    name: {
         type: String
     },
     timestamp: {
