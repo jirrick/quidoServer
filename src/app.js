@@ -5,7 +5,7 @@ const express = require('express'),
     mongoose = require('mongoose'),
     config = require('./config'),
     routes = require('./routes/quidoRoutes'),
-    models= require('./models/quidoModel'),
+    models = require('./models/quidoModel'),
     app = express(),
     port = process.env.PORT || 3001;
 

@@ -1,13 +1,13 @@
 'use strict';
 module.exports = function(app) {
-    const quido = require('../controllers/quidoController');
+    const appController = require('../controllers/appController');
 
     app.route('/')
-        .get(quido.main);
+        .get(appController.main);
 
     app.route('/listen')
-        .get(quido.listen);  
+        .get(appController.listen);  
 
     app.route('/view')
-        .get(quido.viewAll);
+        .get(appController.viewAll);
 };
