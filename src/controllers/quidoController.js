@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose'),
     Logs = mongoose.model('Logs'),
+    util = require('util'),
     environment = process.env.NODE_ENV || 'development';
 
 //Index page
@@ -24,10 +25,10 @@ exports.listen = function (req, res) {
 
 //View page
 exports.viewAll = function (req, res) {
-    Logs.find({}, function (err, task) {
+    Logs.find({}, '-_id name temp timestamp', function (err, data) {
         if (err)
             res.send(err);
-        res.json(task);
+        res.json(data);
     });
 };
 

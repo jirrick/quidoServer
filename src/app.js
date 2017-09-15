@@ -1,5 +1,6 @@
 'use strict';
 const express = require('express'),
+    pretty = require('express-prettify'),
     helmet = require('helmet'),
     mongoose = require('mongoose'),
     config = require('./config'),
@@ -12,8 +13,9 @@ const express = require('express'),
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongoDB, {useMongoClient: true});
 
-//Set up Helmet
+//Set up Helmet & Prettify
 app.use(helmet());
+app.use(pretty({ query: 'pretty' }));
 
 //Set up routes and start app
 routes(app);

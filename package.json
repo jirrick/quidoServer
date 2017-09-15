@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.15.4",
+    "express-prettify": "0.0.8",
     "helmet": "^3.8.1",
     "mongoose": "^4.11.11"
   }
