@@ -22,12 +22,24 @@ exports.viewAll = function (req, res) {
     Logs.
         find({}).
         limit(25).
-        sort('-timestamp').
-        select('-_id name temp timestamp counters').
+        sort('-_id').
+        select('_id name temp counters').
         exec(function (err, data) {
             if (err)
                 res.send(err);
-            res.json(data);
+
+            //badly transform output
+            let item;
+            let result = [];
+            for (item of data) {
+                let _tmp = {};
+                _tmp.timestamp = item._id.getTimestamp();
+                _tmp.temp = item.temp;
+                _tmp.counters = item.counters;
+                result.push(_tmp);
+            }
+
+            res.json(result);
         });
 };
 
