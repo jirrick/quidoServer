@@ -17,11 +17,15 @@ exports.listen = function (req, res) {
     boardController.parse(req, res);
 };
 
-//View page - last 25 records
-exports.viewAll = function (req, res) {
+//View page - last N records
+exports.view = function (req, res) {
+    const _limit = parseInt(req.params.limit);
+    let limit = 25;
+    if (_limit > 0) limit = _limit;
+    
     Logs.
         find({}).
-        limit(25).
+        limit(limit).
         sort('-_id').
         select('_id name temp counters').
         exec(function (err, data) {

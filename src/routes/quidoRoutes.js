@@ -6,8 +6,8 @@ module.exports = function(app) {
         .get(appController.main);
 
     app.route('/listen')
-        .get(appController.listen);  
+        .get(appController.listen);    
 
-    app.route('/view')
-        .get(appController.viewAll);
+    app.route('/view/:limit?')
+        .get(appController.view);
 };
