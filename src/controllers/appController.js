@@ -13,16 +13,21 @@ exports.main = function (req, res) {
 //Listen page
 exports.listen = function (req, res) {
     //console.log(req.originalUrl);
-    
+
     boardController.parse(req, res);
 };
 
-//View page
+//View page - last 25 records
 exports.viewAll = function (req, res) {
-    Logs.find({}, '-_id name temp timestamp counters', function (err, data) {
-        if (err)
-            res.send(err);
-        res.json(data);
-    });
+    Logs.
+        find({}).
+        limit(25).
+        sort('-timestamp').
+        select('-_id name temp timestamp counters').
+        exec(function (err, data) {
+            if (err)
+                res.send(err);
+            res.json(data);
+        });
 };
 
