@@ -1,44 +1,23 @@
 'use strict';
 
-const mongoose = require('mongoose'),
-    Logs = mongoose.model('Logs');
+const config = require('../config'),
+    levyController = require('./levyController'),
+    pravyController = require('./pravyController');
 
-//Handle 'LEVY' board
-exports.levy = function (req, res) {
-    //Parse data from request into object
-    const parsed = new Object();
-    parsed.name = req.query.name;
-    parsed.temp = req.query.tempV;
-    parsed.timestamp = Date.now();
+//Parse board request
+exports.parse= function (req, res) {
+    //verify board
+    const req_name = req.query.name;
+    const req_mac = req.query.mac;
+    const boardInfo = config.boards.find(board => board.name === req_name && board.mac === req_mac);
 
-    //Create Log item and save to mongo
-    const newLog = new Logs(parsed);
-    newLog.save(function (err, data) {
-        if (err)
-            console.error(err);
-        console.log(data);
-    });
-
-    //Send reply - do nothing
-    res.set('Content-Type', 'text/xml');
-    res.send('<?xml version="1.0" encoding="ISO-8859-1"?><root><set outs="xxxxxxxx"/></root>');
+    if (boardInfo != null) {
+        //do different stuff for different board
+        if (req_name === 'LEVY')
+            levyController.process(boardInfo, req, res);
+        else if (req_name === 'PRAVY')
+            pravyController.process(boardInfo, req, res);
+    }
+    else
+        res.status(400).send('Unknown board!');
 };
-
-//Handle 'PRAVY' board
-exports.pravy = function (req, res) {
-    //Send reply - do random shit
-    const outs = rndOut();
-    res.set('Content-Type', 'text/xml');
-    res.send('<?xml version="1.0" encoding="ISO-8859-1"?><root><set outs="' + outs + '"/></root>');
-};
-
-//Generate random output
-function rndOut() {
-    let text = '';
-    const possible = '01x';
-
-    for (var i = 0; i < 8; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}

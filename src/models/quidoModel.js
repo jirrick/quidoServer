@@ -17,6 +17,9 @@ const LogSchema = new Schema({
     },
     temp: {
         type: Number
+    },
+    counters: {
+        type: [Number]
     }
 });
 

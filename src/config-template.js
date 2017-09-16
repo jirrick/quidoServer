@@ -4,7 +4,9 @@ const config = {
     boards: [
         {
             name: 'name',
-            mac: 'mac'
+            mac: 'mac',
+            inputs: 8,
+            outputs: 8
         }
     ],
 
