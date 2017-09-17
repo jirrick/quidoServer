@@ -1,13 +1,19 @@
 'use strict';
-module.exports = function(app) {
-    const appController = require('../controllers/appController');
 
+const appController = require('../controllers/appController'),
+    boardController = require('../controllers/boardController'),
+    viewController = require('../controllers/viewController');
+
+module.exports = function (app) {
     app.route('/')
         .get(appController.main);
 
     app.route('/listen')
-        .get(appController.listen);    
+        .get(boardController.parse);
 
     app.route('/view/:limit?')
-        .get(appController.view);
+        .get(viewController.jsonAll);
+
+    app.route('/temps/:limit?')
+        .get(viewController.jsonTemp);
 };

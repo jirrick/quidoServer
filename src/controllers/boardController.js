@@ -5,7 +5,7 @@ const config = require('../config'),
     pravyController = require('./pravyController');
 
 //Parse board request
-exports.parse= function (req, res) {
+exports.parse = function (req, res) {
     //verify board
     const req_name = req.query.name;
     const req_mac = req.query.mac;

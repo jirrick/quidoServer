@@ -1,12 +1,12 @@
 'use strict';
 const express = require('express'),
+    mongoose = require('mongoose'),
+    models = require('./models/quidoModel'),
     errorHandler = require('strong-error-handler'),
     pretty = require('express-prettify'),
     helmet = require('helmet'),
-    mongoose = require('mongoose'),
     config = require('./config'),
     routes = require('./routes/quidoRoutes'),
-    models = require('./models/quidoModel'),
     app = express(),
     environment = process.env.NODE_ENV || 'development',
     port = process.env.PORT || 3001;
