@@ -36,6 +36,27 @@ class OutputGroup {
     }
 }
 
+class Board{
+    constructor(data = {}) {
+        //parse data from config
+        Object.assign(this, data);
+
+        //create outClasses
+        let outClass = [];
+        let output_group;
+        for (output_group of data.output_groups) {
+            outClass.push(new OutputGroup(
+                output_group.name,
+                output_group.outs,
+                output_group.minValue,
+                output_group.increment
+            ));
+        }
+        this.outputClasses = outClass;
+    }
+}
+
 module.exports = {
-    OutputGroup: OutputGroup
+    OutputGroup: OutputGroup,
+    Board: Board
 };

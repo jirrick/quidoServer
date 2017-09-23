@@ -6,6 +6,7 @@ const express = require('express'),
     pretty = require('express-prettify'),
     helmet = require('helmet'),
     config = require('./config'),
+    boardClasses = require('./class/boardClasses'),
     routes = require('./routes/quidoRoutes'),
     app = express(),
     environment = process.env.NODE_ENV || 'development',
@@ -14,6 +15,14 @@ const express = require('express'),
 //Set up default mongoose connection
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongoDB, { useMongoClient: true });
+
+//TEST
+let boards = [];
+let board = null;
+for (board of config.boards) {
+    let boardClass = new boardClasses.Board(board);
+    boards.push(boardClass);
+}
 
 //Set up middleware
 app.use(helmet());
