@@ -3,15 +3,12 @@ const mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 const LogSchema = new Schema({
-    name: {
-        type: String
-    },
-    temp: {
-        type: Number
-    },
-    counters: {
-        type: [Number]
-    }
+    name: String,
+    temp: Number,
+    inputs: [{
+        name: String,
+        value: Number
+    }]
 });
 
 module.exports = mongoose.model('Logs', LogSchema);

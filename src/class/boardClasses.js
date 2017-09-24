@@ -34,18 +34,47 @@ class OutputGroup {
     }
 }
 
+class InputGroup {
+    constructor(data = {}) {
+        Object.assign(this, data);
+    }
+
+    parse(inputs, counters){
+        let result = 0;
+        if (this.ins.length == 2){ //ANALOG
+            const cntBase = counters[this.ins[0]];
+            const cntValue = counters[this.ins[1]];
+
+            result = this.multiplier * ((cntValue / cntBase) - 1);
+        }
+        else if (this.ins.length == 1){ //BIT
+            // just parse state of first (only) defined input (convert index from one base to zero base)
+            const bitNumber = this.ins[0] - 1; 
+            result = parseInt(inputs[bitNumber]);
+        }
+        return result;
+    }
+}
+
 class Board{
     constructor(data = {}) {
         //parse data from config
         Object.assign(this, data);
 
+        let group;
         //create outClasses
         let outClass = [];
-        let output_group;
-        for (output_group of data.output_groups) {
-            outClass.push(new OutputGroup(output_group));
+        for (group of data.output_groups) {
+            outClass.push(new OutputGroup(group));
         }
         this.outputClasses = outClass;
+
+        //create inClasses
+        let inClass = [];
+        for (group of data.input_groups) {
+            inClass.push(new InputGroup(group));
+        }
+        this.inputClasses = inClass;
     }
 
     setOutput(name, value){
@@ -104,10 +133,29 @@ class Board{
         }
         return result;
     }
+
+    parseInput(inputs, counters){
+        //output array of parsed values
+        let result = [];
+
+        //go through all input classes
+        let group;
+        for (group of this.inputClasses) {
+            //create input object
+            const parsedValue = group.parse(inputs, counters);
+            const inputObject = {
+                name: group.name,
+                value: parsedValue
+            };
+            result.push(inputObject);
+        }
+        return result;
+    }
 }
 
 module.exports = {
     OutputGroup: OutputGroup,
+    InputGroup: InputGroup,
     Board: Board
 };
 

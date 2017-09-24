@@ -5,7 +5,19 @@ const config = {
         {
             name: 'name',
             mac: 'mac',
-            inputs: [],
+            inputs: 8,
+            input_groups: [
+                {
+                    name: 'testIn1',
+                    ins: [7, 8], //ANALOG - first base, second value
+                    multiplier: 5
+                },
+                {
+                    name: 'testInA',
+                    ins: [1], //BIT
+                    multiplier: 1
+                }
+            ],
             outputs: 8,
             output_groups: [
                 {
