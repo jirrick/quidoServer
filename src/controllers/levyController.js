@@ -1,5 +1,7 @@
 'use strict';
 
+//DEPRECATED
+
 const mongoose = require('mongoose'),
     Logs = mongoose.model('Logs');
 

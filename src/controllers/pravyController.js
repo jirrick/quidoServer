@@ -1,5 +1,7 @@
 'use strict';
 
+//DEPRECATED
+
 //Handle 'PRAVY' board
 exports.process = function (boardInfo, req, res) {
     //Send reply from board class

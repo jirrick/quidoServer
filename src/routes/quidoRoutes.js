@@ -2,7 +2,8 @@
 
 const appController = require('../controllers/appController'),
     boardController = require('../controllers/boardController'),
-    viewController = require('../controllers/viewController');
+    viewController = require('../controllers/viewController'),
+    outputController = require('../controllers/outputController');
 
 module.exports = function (app) {
     app.route('/')
@@ -12,10 +13,10 @@ module.exports = function (app) {
         .get(boardController.parse);
 
     app.route('/output/:name')
-        .get(boardController.getValue);
+        .get(outputController.getValue);
 
     app.route('/output/:name/:value')
-        .get(boardController.setValue);
+        .get(outputController.setValue);
 
     app.route('/view/:limit?')
         .get(viewController.jsonAll);
