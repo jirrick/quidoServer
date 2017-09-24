@@ -1,11 +1,9 @@
 class OutputGroup {
-    constructor(name, outs, minValue, increment) {
-        this.name = name;
-        this.outs = outs;
-        this.minValue = minValue;
-        this.increment = increment;
-        this.maxValue = minValue + (Math.pow(2, outs.length) - 1) * increment;
-        this.value = minValue;
+    constructor(data = {}) {
+        Object.assign(this, data);
+
+        this.maxValue = data.minValue + (Math.pow(2, data.outs.length) - 1) * data.increment;
+        this.value = data.minValue;
     }
 
     setValue(value) {
@@ -45,12 +43,7 @@ class Board{
         let outClass = [];
         let output_group;
         for (output_group of data.output_groups) {
-            outClass.push(new OutputGroup(
-                output_group.name,
-                output_group.outs,
-                output_group.minValue,
-                output_group.increment
-            ));
+            outClass.push(new OutputGroup(output_group));
         }
         this.outputClasses = outClass;
     }
