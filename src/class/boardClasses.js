@@ -48,8 +48,8 @@ class InputGroup {
             const cntBase = counters[this.ins[0] - 1];
             const cntValue = counters[this.ins[1] - 1];
 
-            //parse only when counters are over treshold
-            if (cntBase > this.treshold || cntValue > this.treshold) {
+            //parse only when base counter is over treshold
+            if (cntBase >= this.treshold) {
                 result = this.multiplier * ((cntValue / cntBase) - 1);
             }
         }
@@ -72,8 +72,8 @@ class InputGroup {
             const cntBase = counters[indexBase];
             const cntValue = counters[indexValue];
 
-            //reset only when counters are over treshold
-            if (cntBase > this.treshold || cntValue > this.treshold) {
+            //reset only when base counter is over treshold
+            if (cntBase >= this.treshold) {
                 result[indexBase] = cntBase;
                 result[indexValue] = cntValue;
             }
