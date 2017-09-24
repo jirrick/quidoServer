@@ -6,7 +6,27 @@ const config = {
             name: 'name',
             mac: 'mac',
             inputs: 8,
-            outputs: 8
+            input_groups: [
+                {
+                    name: 'testIn1',
+                    ins: [7, 8], //ANALOG - first base, second value
+                    multiplier: 5,
+                    treshold: 1000
+                },
+                {
+                    name: 'testInA',
+                    ins: [1] //BIT
+                }
+            ],
+            outputs: 8,
+            output_groups: [
+                {
+                    name: 'testOut',
+                    outs: [1, 2, 3],
+                    minValue: 15,
+                    increment: 2
+                }
+            ]
         }
     ],
 
