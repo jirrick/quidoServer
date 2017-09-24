@@ -16,16 +16,13 @@ const express = require('express'),
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongoDB, { useMongoClient: true });
 
-//TEST
-let boards = [];
-let board = null;
-for (board of config.boards) {
-    let boardClass = new boardClasses.Board(board);
-    console.log(boardClass.setOutput('testOut1',5));
-    console.log(boardClass.setOutput('testOut1',25));
-    const out = boardClass.getOutput();
-    boards.push(boardClass);
+//initialize boards
+let _boards = [];
+let _board = null;
+for (_board of config.boards) {
+    _boards.push(new boardClasses.Board(_board));
 }
+exports.boards = _boards;
 
 //Set up middleware
 app.use(helmet());

@@ -29,7 +29,8 @@ exports.process = function (boardInfo, req, res) {
         console.log(data);
     });
 
-    //Send reply - do nothing or reset counters
+    //Send reply
+    //TODO use board class
     let command = 'outs="xxxxxxxx"';
     if (resetCounters)
         command += resetString(tmpCounters);

@@ -1,6 +1,6 @@
 'use strict';
 
-const config = require('../config'),
+const server = require('../server'),
     levyController = require('./levyController'),
     pravyController = require('./pravyController');
 
@@ -9,7 +9,7 @@ exports.parse = function (req, res) {
     //verify board
     const req_name = req.query.name;
     const req_mac = req.query.mac;
-    const boardInfo = config.boards.find(board => board.name === req_name && board.mac === req_mac);
+    const boardInfo = server.boards.find(board => board.name === req_name && board.mac === req_mac);
 
     if (boardInfo != null) {
         //do different stuff for different board
