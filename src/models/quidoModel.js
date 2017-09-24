@@ -4,7 +4,6 @@ const mongoose = require('mongoose'),
 
 const LogSchema = new Schema({
     name: String,
-    temp: Number,
     inputs: [{
         _id: false,
         name: String,

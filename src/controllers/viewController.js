@@ -9,7 +9,7 @@ exports.jsonAll = function (req, res) {
         find({}).
         limit(getLimit(req)).
         sort('-_id').
-        select('_id name temp inputs').
+        select('_id name inputs').
         exec(function (err, data) {
             if (err)
                 res.send(err);
@@ -20,7 +20,6 @@ exports.jsonAll = function (req, res) {
                 let _tmp = {};
                 _tmp.name = item.name;
                 _tmp.timestamp = item._id.getTimestamp();
-                _tmp.temp = item.temp;
                 _tmp.inputs = item.inputs;
                 result.push(_tmp);
             }
@@ -34,7 +33,7 @@ exports.jsonTemp = function (req, res) {
         find({}).
         limit(getLimit(req)).
         sort('-_id').
-        select('name temp').
+        select('name inputs').
         exec(function (err, data) {
             if (err)
                 res.send(err);
@@ -44,7 +43,9 @@ exports.jsonTemp = function (req, res) {
             let result = {};
             for (let item of reversed) {
                 result[item.name] = result[item.name] || [];
-                result[item.name].push(item.temp);
+                let temp = item.inputs.find(input => input.name === 'temp');
+                if (temp != null)
+                    result[item.name].push(temp.value);
             }
             res.json(result);
         });

@@ -23,12 +23,17 @@ exports.parse = function (req, res) {
         }
         const ins = req.query.ins;
 
-        //gater other data
+        //add temp to parsed inputs
+        const parsedInputs = boardInfo.parseInput(ins, inputCounters);
+        const temp = new Object();
+        temp.name = 'temp';
+        temp.value = req.query.tempV;
+        parsedInputs.push(temp);
+
+        //create data object
         const data = new Object();
         data.name = req.query.name;
-        data.temp = req.query.tempV;
-        data.timestamp = Date.now();
-        data.inputs = boardInfo.parseInput(ins, inputCounters);
+        data.inputs = parsedInputs;
     
         //Create Log item and save to mongo
         const newLog = new Logs(data);
