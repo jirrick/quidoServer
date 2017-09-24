@@ -6,7 +6,7 @@ const express = require('express'),
     pretty = require('express-prettify'),
     helmet = require('helmet'),
     config = require('./config'),
-    boardClasses = require('./class/boardClasses'),
+    Board = require('./class/boardClass'),
     routes = require('./routes/quidoRoutes'),
     app = express(),
     environment = process.env.NODE_ENV || 'development',
@@ -19,7 +19,7 @@ mongoose.connect(config.mongoDB, { useMongoClient: true });
 //initialize boards
 let _boards = [];
 for (let _board of config.boards) {
-    _boards.push(new boardClasses.Board(_board));
+    _boards.push(new Board(_board));
 }
 exports.boards = _boards;
 

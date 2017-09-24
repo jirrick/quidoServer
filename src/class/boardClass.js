@@ -1,86 +1,6 @@
-const roundTo = require('round-to');
-
-class OutputGroup {
-    constructor(data = {}) {
-        Object.assign(this, data);
-
-        this.maxValue = data.minValue + (Math.pow(2, data.outs.length) - 1) * data.increment;
-        this.value = data.minValue;
-    }
-
-    setValue(value) {
-        let result = '';
-        //check value is number
-        if (typeof value === 'number') {
-            //check value is in bounds
-            if (value >= this.minValue && value <= this.maxValue) {
-                //check if value can be reached
-                if ((value - this.minValue) % this.increment == 0) {
-                    this.value = value;
-                    result = 'success';
-                } else
-                    result = 'value not reachable';
-            } else
-                result = 'value out of bounds';
-        } else
-            result = 'not a number';
-        return result;
-    }
-
-    getValue() {
-        const length = this.outs.length;
-        const baseValue = (this.value - this.minValue) / this.increment;
-        const binary = baseValue.toString(2);
-        const padded = '0'.repeat(length) + binary;
-        return (padded.slice(-length));
-    }
-}
-
-class InputGroup {
-    constructor(data = {}) {
-        Object.assign(this, data);
-    }
-
-    parse(inputs, counters) {
-        let result = -1;
-        if (this.ins.length == 2) { //ANALOG
-            //get counter values (convert index from one base to zero base)
-            const cntBase = counters[this.ins[0] - 1];
-            const cntValue = counters[this.ins[1] - 1];
-
-            //parse only when base counter is over treshold
-            if (cntBase >= this.treshold) {
-                result = this.multiplier * ((cntValue / cntBase) - 1);
-            }
-        }
-        else if (this.ins.length == 1) { //BIT
-            // just parse state of first (only) defined input (convert index from one base to zero base)
-            const bitNumber = this.ins[0] - 1;
-            result = parseInt(inputs[bitNumber]);
-        }
-        return result;
-    }
-
-    resetValues(counters){
-        // by default do nothing
-        let result = Array(counters.length).fill(0);
-        if (this.ins.length == 2) { //ANALOG
-            //get counter values (convert index from one base to zero base)
-            const indexBase = this.ins[0] - 1;
-            const indexValue = this.ins[1] - 1;
-
-            const cntBase = counters[indexBase];
-            const cntValue = counters[indexValue];
-
-            //reset only when base counter is over treshold
-            if (cntBase >= this.treshold) {
-                result[indexBase] = cntBase;
-                result[indexValue] = cntValue;
-            }
-        }
-        return result;
-    }
-}
+const roundTo = require('round-to'),
+    OutputGroup = require('./outputGroup'),
+    InputGroup = require('./inputGroup');
 
 class Board {
     constructor(data = {}) {
@@ -129,11 +49,11 @@ class Board {
         let outputString = 'x'.repeat(this.outputs);
         for (let group of this.outputClasses) {
             //save group output
-            const groupOut = group.getValue();
+            const groupOut = group.getBinaryValue();
             let bitCount = 0;
             let indexOne;
             for (indexOne of group.outs) {
-                const indexZero = --indexOne;
+                const indexZero = indexOne - 1;
                 //check output bounds and overwriting of result
                 if (indexZero >= 0 && indexZero < this.outputs && outputString[indexZero] === 'x') {
                     outputString = setCharAt(outputString, indexZero, groupOut[bitCount]);
@@ -198,11 +118,7 @@ class Board {
     }
 }
 
-module.exports = {
-    OutputGroup: OutputGroup,
-    InputGroup: InputGroup,
-    Board: Board
-};
+module.exports = Board;
 
 function setCharAt(str, index, chr) {
     if (index > str.length - 1) return str;
