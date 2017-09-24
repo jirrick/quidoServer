@@ -9,7 +9,7 @@ exports.jsonAll = function (req, res) {
         find({}).
         limit(getLimit(req)).
         sort('-_id').
-        select('_id name temp counters').
+        select('_id name temp inputs').
         exec(function (err, data) {
             if (err)
                 res.send(err);
@@ -21,7 +21,7 @@ exports.jsonAll = function (req, res) {
                 _tmp.name = item.name;
                 _tmp.timestamp = item._id.getTimestamp();
                 _tmp.temp = item.temp;
-                _tmp.counters = item.counters;
+                _tmp.inputs = item.inputs;
                 result.push(_tmp);
             }
             res.json(result);

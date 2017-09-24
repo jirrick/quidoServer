@@ -1,3 +1,5 @@
+const roundTo = require('round-to');
+
 class OutputGroup {
     constructor(data = {}) {
         Object.assign(this, data);
@@ -182,7 +184,7 @@ class Board {
             if (parsedValue >= 0) {
                 const inputObject = {
                     name: group.name,
-                    value: parsedValue
+                    value: roundTo(parsedValue, 1)
                 };
                 result.push(inputObject);
 
