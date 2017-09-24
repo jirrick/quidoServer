@@ -21,3 +21,23 @@ exports.parse = function (req, res) {
     else
         res.status(400).send('Unknown board!');
 };
+
+exports.setValue = function (req, res) {
+    const name = req.params.name;
+    const value = parseInt(req.params.value);
+    let result = 'group not found';
+
+    //loop all boards
+    let board = null;
+    for (board of server.boards) {
+        // try set value
+        const response = board.setOutput(name, value);
+        // break loop when response is other than 'group not found' - either 'succes' or 'not initialized'...
+        //TODO do this better
+        if (response !== result){
+            result = response;
+            break;
+        }
+    }
+    res.send(result);
+};

@@ -11,6 +11,9 @@ module.exports = function (app) {
     app.route('/listen')
         .get(boardController.parse);
 
+    app.route('/output/:name/:value')
+        .get(boardController.setValue);
+
     app.route('/view/:limit?')
         .get(viewController.jsonAll);
 
