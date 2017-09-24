@@ -30,6 +30,7 @@ exports.setValue = function (req, res) {
     //check negative value
     if (value < 0){
         res.send('value must be positive');
+        return;
     }
 
     //loop all boards
