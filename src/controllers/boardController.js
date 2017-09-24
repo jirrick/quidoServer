@@ -27,6 +27,11 @@ exports.setValue = function (req, res) {
     const value = parseInt(req.params.value);
     let result = 'group not found';
 
+    //check negative value
+    if (value < 0){
+        res.send('value must be positive');
+    }
+
     //loop all boards
     let board = null;
     for (board of server.boards) {
@@ -40,4 +45,22 @@ exports.setValue = function (req, res) {
         }
     }
     res.send(result);
+};
+
+exports.getValue = function (req, res) {
+    const name = req.params.name;
+    let result = 0;
+
+    //loop all boards
+    let board = null;
+    for (board of server.boards) {
+        // try get value
+        const response = board.getValue(name);
+
+        if (response >= 0){
+            result = response;
+            break;
+        }
+    }
+    res.send(result.toString());
 };

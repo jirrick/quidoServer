@@ -11,6 +11,9 @@ module.exports = function (app) {
     app.route('/listen')
         .get(boardController.parse);
 
+    app.route('/output/:name')
+        .get(boardController.getValue);
+
     app.route('/output/:name/:value')
         .get(boardController.setValue);
 

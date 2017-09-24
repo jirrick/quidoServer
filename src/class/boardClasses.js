@@ -89,6 +89,21 @@ class Board{
         }
         return result;
     }
+
+    getValue(name){
+        //deafult output -1
+        let result = -1;
+
+        // check that output classes are initialized and contains requested group
+        if (this.outputClasses != null){
+            const outGroup = this.outputClasses.find(group => group.name === name);
+            if (outGroup != null){
+                // return the result
+                result = outGroup.value;
+            }
+        }
+        return result;
+    }
 }
 
 module.exports = {
