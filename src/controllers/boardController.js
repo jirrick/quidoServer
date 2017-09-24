@@ -12,6 +12,8 @@ exports.parse = function (req, res) {
     const boardInfo = server.boards.find(board => board.name === req_name && board.mac === req_mac);
 
     if (boardInfo != null) {
+        //console.log(req.originalUrl);
+
         //parse counters into array
         const inputCounters = [];
         for (let i = 1; i <= boardInfo.inputs; i++) {
@@ -24,19 +26,12 @@ exports.parse = function (req, res) {
         const parsedInput = boardInfo.parseInput(ins, inputCounters);
         console.log(parsedInput);
 
-        //TODO - send actual response
-        const reply = '<?xml version="1.0" encoding="ISO-8859-1"?><root><set outs="xxxxxxxx"/></root>';
+        //send response
+        const reply = boardInfo.getResponse();
+        //console.log(reply);
         res.set('Content-Type', 'text/xml');
         res.send(reply);
     }
     else
         res.status(400).send('Unknown board!');
 };
-
-/* function output(boardInfo, req, res) {
-    //Send reply from board class
-    const outs = boardInfo.getOutput();
-
-    res.set('Content-Type', 'text/xml');
-    res.send('<?xml version="1.0" encoding="ISO-8859-1"?><root><set outs="' + outs + '"/></root>');
-} */

@@ -14,8 +14,7 @@ exports.setValue = function (req, res) {
     }
 
     //loop all boards
-    let board = null;
-    for (board of server.boards) {
+    for (let board of server.boards) {
         // try set value
         const response = board.setOutput(name, value);
         // break loop when response is other than 'group not found' - either 'succes' or 'not initialized'...
@@ -33,8 +32,7 @@ exports.getValue = function (req, res) {
     let result = 0;
 
     //loop all boards
-    let board = null;
-    for (board of server.boards) {
+    for (let board of server.boards) {
         // try get value
         const response = board.getValue(name);
 

@@ -18,8 +18,7 @@ mongoose.connect(config.mongoDB, { useMongoClient: true });
 
 //initialize boards
 let _boards = [];
-let _board = null;
-for (_board of config.boards) {
+for (let _board of config.boards) {
     _boards.push(new boardClasses.Board(_board));
 }
 exports.boards = _boards;

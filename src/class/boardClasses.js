@@ -59,7 +59,25 @@ class InputGroup {
         return result;
     }
 
+    resetValues(counters){
+        // by default do nothing
+        let result = Array(counters.length).fill(0);
+        if (this.ins.length == 2) { //ANALOG
+            //get counter values (convert index from one base to zero base)
+            const indexBase = this.ins[0] - 1;
+            const indexValue = this.ins[1] - 1;
 
+            const cntBase = counters[indexBase];
+            const cntValue = counters[indexValue];
+
+            //reset only when counters are over treshold
+            if (cntBase > this.treshold || cntValue > this.treshold) {
+                result[indexBase] = cntBase;
+                result[indexValue] = cntValue;
+            }
+        }
+        return result;
+    }
 }
 
 class Board {
@@ -67,20 +85,22 @@ class Board {
         //parse data from config
         Object.assign(this, data);
 
-        let group;
         //create outClasses
         let outClass = [];
-        for (group of data.output_groups) {
+        for (let group of data.output_groups) {
             outClass.push(new OutputGroup(group));
         }
         this.outputClasses = outClass;
 
         //create inClasses
         let inClass = [];
-        for (group of data.input_groups) {
+        for (let group of data.input_groups) {
             inClass.push(new InputGroup(group));
         }
         this.inputClasses = inClass;
+
+        //array containing values to be subtracted from board counters
+        this.resetCounters = Array(this.inputs).fill(0);
     }
 
     setOutput(name, value) {
@@ -102,13 +122,10 @@ class Board {
         return result;
     }
 
-    getOutput() {
-        //deafult output - NOP
-        let result = 'x'.repeat(this.outputs);
-
-        //go through all output classes and substitute their output
-        let group;
-        for (group of this.outputClasses) {
+    getResponse() {
+        //go through all output classes and substitute their output (deafult output = NOP)
+        let outputString = 'x'.repeat(this.outputs);
+        for (let group of this.outputClasses) {
             //save group output
             const groupOut = group.getValue();
             let bitCount = 0;
@@ -116,12 +133,24 @@ class Board {
             for (indexOne of group.outs) {
                 const indexZero = --indexOne;
                 //check output bounds and overwriting of result
-                if (indexZero >= 0 && indexZero < this.outputs && result[indexZero] === 'x') {
-                    result = setCharAt(result, indexZero, groupOut[bitCount]);
+                if (indexZero >= 0 && indexZero < this.outputs && outputString[indexZero] === 'x') {
+                    outputString = setCharAt(outputString, indexZero, groupOut[bitCount]);
                     bitCount++;
                 }
             }
+        }        
+
+        //go through all counter reset values and create reset string if needed (value bigger than 0)
+        let resetString = '';
+        for (var i = 0, len = this.resetCounters.length; i < len; i++) {
+            if (this.resetCounters[i] > 0){
+                resetString += ` cnt${i+1}="${this.resetCounters[i]}"`;
+                this.resetCounters[i] = 0;
+            }
         }
+
+        //build the response
+        const result = `<?xml version="1.0" encoding="ISO-8859-1"?><root><set outs="${outputString}"${resetString} /></root>`;
         return result;
     }
 
@@ -145,8 +174,7 @@ class Board {
         let result = [];
 
         //go through all input classes
-        let group;
-        for (group of this.inputClasses) {
+        for (let group of this.inputClasses) {
             //create input object
             const parsedValue = group.parse(inputs, counters);
 
@@ -157,6 +185,11 @@ class Board {
                     value: parsedValue
                 };
                 result.push(inputObject);
+
+                const resetValues = group.resetValues(counters);
+                this.resetCounters.forEach(function(item, index, arr) {
+                    arr[index] = item + resetValues[index];
+                });
             }
         }
         return result;

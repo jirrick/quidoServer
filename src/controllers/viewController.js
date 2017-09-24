@@ -15,9 +15,8 @@ exports.jsonAll = function (req, res) {
                 res.send(err);
 
             //badly transform output
-            let item;
             let result = [];
-            for (item of data) {
+            for (let item of data) {
                 let _tmp = {};
                 _tmp.name = item.name;
                 _tmp.timestamp = item._id.getTimestamp();
@@ -42,9 +41,8 @@ exports.jsonTemp = function (req, res) {
 
             //badly transform output
             const reversed = data.reverse();
-            let item;
             let result = {};
-            for (item of reversed) {
+            for (let item of reversed) {
                 result[item.name] = result[item.name] || [];
                 result[item.name].push(item.temp);
             }
