@@ -23,8 +23,20 @@ exports.parse = function (req, res) {
         }
         const ins = req.query.ins;
 
-        const parsedInput = boardInfo.parseInput(ins, inputCounters);
-        console.log(parsedInput);
+        //gater other data
+        const data = new Object();
+        data.name = req.query.name;
+        data.temp = req.query.tempV;
+        data.timestamp = Date.now();
+        data.inputs = boardInfo.parseInput(ins, inputCounters);
+    
+        //Create Log item and save to mongo
+        const newLog = new Logs(data);
+        newLog.save(function (err, data) {
+            if (err)
+                console.error(err);
+            console.log(data);
+        });
 
         //send response
         const reply = boardInfo.getResponse();
