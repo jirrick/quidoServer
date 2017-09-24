@@ -1,11 +1,11 @@
 class OutputGroup {
     constructor(name, outs, minValue, increment) {
-        this._name = name;
-        this._outs = outs;
-        this._minValue = minValue;
-        this._increment = increment;
-        this._maxValue = minValue + (Math.pow(2, outs.length) - 1) * increment;
-        this._value = minValue;
+        this.name = name;
+        this.outs = outs;
+        this.minValue = minValue;
+        this.increment = increment;
+        this.maxValue = minValue + (Math.pow(2, outs.length) - 1) * increment;
+        this.value = minValue;
     }
 
     setValue(value) {
@@ -13,10 +13,10 @@ class OutputGroup {
         //check value is number
         if (typeof value === 'number') {
             //check value is in bounds
-            if (value >= this._minValue && value <= this._maxValue) {
+            if (value >= this.minValue && value <= this.maxValue) {
                 //check if value can be reached
-                if ((value - this._minValue) % this._increment == 0) {
-                    this._value = value;
+                if ((value - this.minValue) % this.increment == 0) {
+                    this.value = value;
                     result = 'success';
                 } else
                     result = 'value not reachable';
@@ -28,8 +28,8 @@ class OutputGroup {
     }
 
     getValue() {
-        const length = this._outs.length;
-        const baseValue = (this._value - this._minValue) / this._increment;
+        const length = this.outs.length;
+        const baseValue = (this.value - this.minValue) / this.increment;
         const binary = baseValue.toString(2);
         const padded = '0'.repeat(length) + binary;
         return (padded.slice(-length));
@@ -54,9 +54,56 @@ class Board{
         }
         this.outputClasses = outClass;
     }
+
+    setOutput(name, value){
+        let result = '';
+        // check that output classes are initialized and contains requested output group
+        if (this.outputClasses != null){
+            const outGroup = this.outputClasses.find(group => group.name === name);
+            if (outGroup != null){
+                // return the result
+                result = outGroup.setValue(value);
+            }
+            else {
+                result = 'group not found';
+            }
+        }
+        else {
+            result = 'not initialized';
+        }
+        return result;
+    }
+
+    getOutput(){
+        //deafult output - NOP
+        let result = 'x'.repeat(this.outputs);
+
+        //go through all output classes and substitute their output
+        let group;
+        for (group of this.outputClasses) {
+            //save group output
+            const groupOut = group.getValue();
+            let bitCount = 0;
+            let indexOne;
+            for (indexOne of group.outs){
+                const indexZero = --indexOne;
+                //check output bounds and overwriting of result
+                if (indexZero >= 0 && indexZero < this.outputs && result[indexZero] === 'x'){
+                    result = setCharAt(result, indexZero, groupOut[bitCount]);
+                    bitCount++;
+                }
+            }
+        }
+        return result;
+    }
 }
 
 module.exports = {
     OutputGroup: OutputGroup,
     Board: Board
 };
+
+function setCharAt(str,index,chr) {
+    if(index > str.length-1) return str;
+    return str.substr(0,index) + chr + str.substr(index+1);
+}
