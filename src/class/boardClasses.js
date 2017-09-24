@@ -39,24 +39,30 @@ class InputGroup {
         Object.assign(this, data);
     }
 
-    parse(inputs, counters){
-        let result = 0;
-        if (this.ins.length == 2){ //ANALOG
-            const cntBase = counters[this.ins[0]];
-            const cntValue = counters[this.ins[1]];
+    parse(inputs, counters) {
+        let result = -1;
+        if (this.ins.length == 2) { //ANALOG
+            //get counter values (convert index from one base to zero base)
+            const cntBase = counters[this.ins[0] - 1];
+            const cntValue = counters[this.ins[1] - 1];
 
-            result = this.multiplier * ((cntValue / cntBase) - 1);
+            //parse only when counters are over treshold
+            if (cntBase > this.treshold || cntValue > this.treshold) {
+                result = this.multiplier * ((cntValue / cntBase) - 1);
+            }
         }
-        else if (this.ins.length == 1){ //BIT
+        else if (this.ins.length == 1) { //BIT
             // just parse state of first (only) defined input (convert index from one base to zero base)
-            const bitNumber = this.ins[0] - 1; 
+            const bitNumber = this.ins[0] - 1;
             result = parseInt(inputs[bitNumber]);
         }
         return result;
     }
+
+
 }
 
-class Board{
+class Board {
     constructor(data = {}) {
         //parse data from config
         Object.assign(this, data);
@@ -77,12 +83,12 @@ class Board{
         this.inputClasses = inClass;
     }
 
-    setOutput(name, value){
+    setOutput(name, value) {
         let result = '';
         // check that output classes are initialized and contains requested output group
-        if (this.outputClasses != null){
+        if (this.outputClasses != null) {
             const outGroup = this.outputClasses.find(group => group.name === name);
-            if (outGroup != null){
+            if (outGroup != null) {
                 // return the result
                 result = outGroup.setValue(value);
             }
@@ -96,7 +102,7 @@ class Board{
         return result;
     }
 
-    getOutput(){
+    getOutput() {
         //deafult output - NOP
         let result = 'x'.repeat(this.outputs);
 
@@ -107,10 +113,10 @@ class Board{
             const groupOut = group.getValue();
             let bitCount = 0;
             let indexOne;
-            for (indexOne of group.outs){
+            for (indexOne of group.outs) {
                 const indexZero = --indexOne;
                 //check output bounds and overwriting of result
-                if (indexZero >= 0 && indexZero < this.outputs && result[indexZero] === 'x'){
+                if (indexZero >= 0 && indexZero < this.outputs && result[indexZero] === 'x') {
                     result = setCharAt(result, indexZero, groupOut[bitCount]);
                     bitCount++;
                 }
@@ -119,14 +125,14 @@ class Board{
         return result;
     }
 
-    getValue(name){
+    getValue(name) {
         //deafult output -1
         let result = -1;
 
         // check that output classes are initialized and contains requested group
-        if (this.outputClasses != null){
+        if (this.outputClasses != null) {
             const outGroup = this.outputClasses.find(group => group.name === name);
-            if (outGroup != null){
+            if (outGroup != null) {
                 // return the result
                 result = outGroup.value;
             }
@@ -134,7 +140,7 @@ class Board{
         return result;
     }
 
-    parseInput(inputs, counters){
+    parseInput(inputs, counters) {
         //output array of parsed values
         let result = [];
 
@@ -143,11 +149,15 @@ class Board{
         for (group of this.inputClasses) {
             //create input object
             const parsedValue = group.parse(inputs, counters);
-            const inputObject = {
-                name: group.name,
-                value: parsedValue
-            };
-            result.push(inputObject);
+
+            //only add value when valid (larger than zero)
+            if (parsedValue >= 0) {
+                const inputObject = {
+                    name: group.name,
+                    value: parsedValue
+                };
+                result.push(inputObject);
+            }
         }
         return result;
     }
@@ -159,7 +169,7 @@ module.exports = {
     Board: Board
 };
 
-function setCharAt(str,index,chr) {
-    if(index > str.length-1) return str;
-    return str.substr(0,index) + chr + str.substr(index+1);
+function setCharAt(str, index, chr) {
+    if (index > str.length - 1) return str;
+    return str.substr(0, index) + chr + str.substr(index + 1);
 }
