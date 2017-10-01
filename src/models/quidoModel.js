@@ -9,6 +9,8 @@ const QuidoData = new Schema({
         name: String,
         value: Number
     }]
+}, {
+    versionKey: false
 });
 
 const QuidoCurrent = new Schema({

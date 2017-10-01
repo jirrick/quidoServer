@@ -1,19 +1,7 @@
 'use strict';
 
 const server = require('../server'),
-    winston = require('winston'),
-    QuidoData = require('../models/quidoModel').QuidoData,
-    QuidoCurrent = require('../models/quidoModel').QuidoCurrent,
-    logLevel = process.env.CONSOLE_LEVEL || 'debug',
-    tsFormat = () => (new Date()).toLocaleTimeString(),
-    logger = new (winston.Logger)({
-        transports: [
-            new (winston.transports.Console)({
-                timestamp: tsFormat,
-                level: logLevel
-            })
-        ]
-    });
+    QuidoData = require('../models/quidoModel').QuidoData;
 
 //Parse board request
 exports.parse = function (req, res) {
@@ -23,7 +11,7 @@ exports.parse = function (req, res) {
     const boardInfo = server.boards.find(board => board.name === req_name && board.mac === req_mac);
 
     if (boardInfo != null) {
-        logger.debug(req.originalUrl);
+        server.logger.debug(req.originalUrl);
 
         //parse counters into array
         const inputCounters = [];
@@ -49,26 +37,17 @@ exports.parse = function (req, res) {
         });
         newItem.save(function (err, data) {
             if (err)
-                logger.warn(err);
-            logger.verbose(`Received ${data.inputs.length} inputs from ${data.name} board`);
-            logger.debug(data.toString());
+                server.logger.warn(err);
+            server.logger.verbose(`Received ${data.inputs.length} inputs from ${data.name} board`);
+            server.logger.debug(data.toString());
         });
 
         //Update current status of board
-        QuidoCurrent.findByIdAndUpdate(boardInfo.name, {
-            inputs: ins,
-            outputs: outs,
-            raw_counters: inputCounters,
-            values: [] //TODO
-        }, { new: true, upsert: true }, function (err, data) {
-            if (err)
-                logger.warn(err);
-            logger.debug(data.toString());
-        });
+        boardInfo.saveCurrentState(ins, inputCounters, outs);
 
         //send response
         const reply = boardInfo.getResponse();
-        logger.debug(reply);
+        server.logger.debug(reply);
         res.set('Content-Type', 'text/xml');
         res.send(reply);
     }

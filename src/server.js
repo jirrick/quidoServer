@@ -8,9 +8,10 @@ const express = require('express'),
     config = require('./config'),
     Board = require('./class/boardClass'),
     routes = require('./routes/quidoRoutes'),
+    winston = require('winston'),
     app = express(),
     environment = process.env.NODE_ENV || 'development',
-    winston = require('winston'),
+    logLevel = process.env.CONSOLE_LEVEL || 'debug',
     port = process.env.PORT || 3001;
 
 //Set up default mongoose connection
@@ -24,6 +25,18 @@ for (let _board of config.boards) {
 }
 exports.boards = _boards;
 
+//set up logger
+const logTimeFormat = () => (new Date()).toLocaleTimeString(),
+    logger = new (winston.Logger)({
+        transports: [
+            new (winston.transports.Console)({
+                timestamp: logTimeFormat,
+                level: logLevel
+            })
+        ]
+    });
+exports.logger = logger;
+
 //Set up middleware
 app.use(helmet());
 app.use(pretty({ query: 'pretty' }));
@@ -36,5 +49,5 @@ app.use(errorHandler({
 routes(app);
 app.listen(port);
 
-winston.info('quido server started on: ' + port);
+logger.info('quido server started on: ' + port);
 
