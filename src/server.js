@@ -10,6 +10,7 @@ const express = require('express'),
     routes = require('./routes/quidoRoutes'),
     app = express(),
     environment = process.env.NODE_ENV || 'development',
+    winston = require('winston'),
     port = process.env.PORT || 3001;
 
 //Set up default mongoose connection
@@ -35,5 +36,5 @@ app.use(errorHandler({
 routes(app);
 app.listen(port);
 
-console.log('quido server started on: ' + port);
+winston.info('quido server started on: ' + port);
 

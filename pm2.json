@@ -4,10 +4,12 @@
     "script": "src/server.js",
     "env": {
         "PORT": 3001,
+        "CONSOLE_LEVEL": "debug",
         "NODE_ENV": "development"
     },
     "env_production": {
         "PORT": 3001,
+        "CONSOLE_LEVEL": "verbose",
         "NODE_ENV": "production"
     }
   }]
