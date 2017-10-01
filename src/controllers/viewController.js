@@ -1,7 +1,6 @@
 'use strict';
 
-const mongoose = require('mongoose'),
-    QuidoData = mongoose.model('QuidoData');
+const QuidoData = require('../models/quidoModel').QuidoData;
 
 //View page - last N records
 exports.jsonAll = function (req, res) {

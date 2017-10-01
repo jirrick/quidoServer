@@ -2,15 +2,16 @@
 
 const server = require('../server'),
     winston = require('winston'),
-    mongoose = require('mongoose'),
-    QuidoData = mongoose.model('QuidoData'),
+    QuidoData = require('../models/quidoModel').QuidoData,
+    QuidoCurrent = require('../models/quidoModel').QuidoCurrent,
     logLevel = process.env.CONSOLE_LEVEL || 'debug',
     tsFormat = () => (new Date()).toLocaleTimeString(),
     logger = new (winston.Logger)({
         transports: [
-            new (winston.transports.Console)({ 
+            new (winston.transports.Console)({
                 timestamp: tsFormat,
-                level: logLevel })
+                level: logLevel
+            })
         ]
     });
 
@@ -31,7 +32,8 @@ exports.parse = function (req, res) {
             const value = parseInt(req.query[key]);
             inputCounters.push(value);
         }
-        const ins = req.query.ins;
+        const ins = req.query.ins,
+            outs = req.query.outs;
 
         //add temp to parsed inputs
         const parsedInputs = boardInfo.parseInput(ins, inputCounters);
@@ -40,17 +42,27 @@ exports.parse = function (req, res) {
         temp.value = req.query.tempV;
         parsedInputs.push(temp);
 
-        //create data object
-        const data = new Object();
-        data.name = req.query.name;
-        data.inputs = parsedInputs;
-
         //Create new QuidoData item and save to mongo
-        const newItem = new QuidoData(data);
+        const newItem = new QuidoData({
+            name: req.query.name,
+            inputs: parsedInputs
+        });
         newItem.save(function (err, data) {
             if (err)
                 logger.warn(err);
             logger.verbose(`Received ${data.inputs.length} inputs from ${data.name} board`);
+            logger.debug(data.toString());
+        });
+
+        //Update current status of board
+        QuidoCurrent.findByIdAndUpdate(boardInfo.name, {
+            inputs: ins,
+            outputs: outs,
+            raw_counters: inputCounters,
+            values: [] //TODO
+        }, { new: true, upsert: true }, function (err, data) {
+            if (err)
+                logger.warn(err);
             logger.debug(data.toString());
         });
 

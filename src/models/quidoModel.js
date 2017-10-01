@@ -11,4 +11,17 @@ const QuidoData = new Schema({
     }]
 });
 
-module.exports = mongoose.model('QuidoData', QuidoData);
+const QuidoCurrent = new Schema({
+    _id: String,
+    inputs: String,
+    outputs: String,
+    raw_counters: [Number],
+    values: [{
+        _id: false,
+        name: String,
+        value: Number
+    }]
+});
+
+exports.QuidoData = mongoose.model('QuidoData', QuidoData);
+exports.QuidoCurrent = mongoose.model('QuidoCurrent', QuidoCurrent);
