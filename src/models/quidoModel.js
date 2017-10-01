@@ -2,7 +2,7 @@
 const mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-const LogSchema = new Schema({
+const QuidoData = new Schema({
     name: String,
     inputs: [{
         _id: false,
@@ -11,4 +11,4 @@ const LogSchema = new Schema({
     }]
 });
 
-module.exports = mongoose.model('Logs', LogSchema);
+module.exports = mongoose.model('QuidoData', QuidoData);

@@ -3,7 +3,7 @@
 const server = require('../server'),
     winston = require('winston'),
     mongoose = require('mongoose'),
-    Logs = mongoose.model('Logs'),
+    QuidoData = mongoose.model('QuidoData'),
     logLevel = process.env.CONSOLE_LEVEL || 'debug',
     tsFormat = () => (new Date()).toLocaleTimeString(),
     logger = new (winston.Logger)({
@@ -45,9 +45,9 @@ exports.parse = function (req, res) {
         data.name = req.query.name;
         data.inputs = parsedInputs;
 
-        //Create Log item and save to mongo
-        const newLog = new Logs(data);
-        newLog.save(function (err, data) {
+        //Create new QuidoData item and save to mongo
+        const newItem = new QuidoData(data);
+        newItem.save(function (err, data) {
             if (err)
                 logger.warn(err);
             logger.verbose(`Received ${data.inputs.length} inputs from ${data.name} board`);
