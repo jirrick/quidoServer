@@ -1,6 +1,6 @@
 'use strict';
 
-const QuidoData = require('../models/quidoModel').QuidoData;
+const QuidoData = require('../models/quidoData');
 
 //View page - last N records
 exports.jsonAll = function (req, res) {

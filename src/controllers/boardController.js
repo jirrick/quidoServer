@@ -1,7 +1,7 @@
 'use strict';
 
 const server = require('../server'),
-    QuidoData = require('../models/quidoModel').QuidoData;
+    QuidoData = require('../models/quidoData');
 
 //Parse board request
 exports.parse = function (req, res) {

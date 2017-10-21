@@ -1,6 +1,6 @@
 const roundTo = require('round-to'),
     server = require('../server'),
-    QuidoCurrent = require('../models/quidoModel').QuidoCurrent,
+    QuidoCurrent = require('../models/quidoCurrent'),
     OutputGroup = require('./outputGroup'),
     InputGroup = require('./inputGroup');
 
