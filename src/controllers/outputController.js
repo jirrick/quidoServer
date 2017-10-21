@@ -1,45 +1,61 @@
 'use strict';
 
-const server = require('../server');
+const server = require('../server'),
+    OutputGroup = require('../models/quidoOutputGroup');
 
-exports.setValue = function (req, res) {
-    const name = req.params.name;
-    const value = parseInt(req.params.value);
-    let result = 'group not found';
+exports.setValue = async function (req, res) {
+    try {
+        const name = req.params.name;
+        const value = parseInt(req.params.value);
+        let result = '';
 
-    //check negative value
-    if (value < 0){
-        res.send('value must be positive');
-        return;
-    }
-
-    /* //loop all boards
-    for (let board of server.boards) {
-        // try set value
-        const response = board.setOutput(name, value);
-        // break loop when response is other than 'group not found' - either 'succes' or 'not initialized'...
-        //TODO do this better
-        if (response !== result){
-            result = response;
-            break;
+        //check negative value
+        if (value < 0) {
+            res.send('value must be positive');
+            return;
         }
-    } */
-    res.send(result);
+
+        //find specified group
+        const group = await OutputGroup.findOne({ '_id': name });
+
+        if (group != null) {
+            //check value is in bounds
+            if (value >= group.minValue && value <= group.maxValue) {
+                //check if value can be reached
+                if ((value - group.minValue) % group.step == 0) {
+                    group.value = value;
+                    group.save();
+                    const success = `output group "${name}" set to value "${value}"`;
+                    server.logger.debug(success);
+                    result = success;
+                } else
+                    result = 'value within bounds, but not reachable';
+            } else
+                result = 'not a number or value out of bounds';
+        } else {
+            result = 'group not found';
+        }
+        res.send(result);
+        return result;
+    } catch (err) {
+        server.logger.error(err);
+    }
 };
 
-exports.getValue = function (req, res) {
-    const name = req.params.name;
-    let result = 0;
+exports.getValue = async function (req, res) {
+    try {
+        const name = req.params.name;
+        let result = -1;
 
-   /*  //loop all boards
-    for (let board of server.boards) {
-        // try get value
-        const response = board.getValue(name);
+        //find specified group
+        const group = await OutputGroup.findOne({ '_id': name });
 
-        if (response >= 0){
-            result = response;
-            break;
+        if (group != null) {
+            result = group.value;
         }
-    } */
-    res.send(result.toString());
+        res.send(result.toString());
+    } catch (err) {
+        server.logger.error(err);
+    }
+
 };

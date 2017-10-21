@@ -69,7 +69,7 @@ OutputGroup.methods.setValue = function (value) {
 
 OutputGroup.methods.getBinaryValue = function () {
     const length = this.outputs.length;
-    const baseValue = (this.value - this.minValue) / this.increment;
+    const baseValue = (this.value - this.minValue) / this.step;
     const binary = baseValue.toString(2);
     const padded = '0'.repeat(length) + binary;
     return (padded.slice(-length));
