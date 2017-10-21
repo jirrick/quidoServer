@@ -6,17 +6,17 @@ const express = require('express'),
     pretty = require('express-prettify'),
     helmet = require('helmet'),
     bodyParser = require('body-parser'),
-    config = require('./config'),
     routes = require('./routes/quidoRoutes'),
     winston = require('winston'),
     app = express(),
     environment = process.env.NODE_ENV || 'development',
     logLevel = process.env.CONSOLE_LEVEL || 'debug',
-    port = process.env.PORT || 3001;
+    port = process.env.PORT || 3001,
+    mongoDB = process.env.MongoDB_CONN;
 
 //Set up default mongoose connection
 mongoose.Promise = global.Promise;
-mongoose.connect(config.mongoDB, { useMongoClient: true });
+mongoose.connect(mongoDB, { useMongoClient: true });
 
 //set up logger
 const logTimeFormat = () => (new Date()).toLocaleTimeString(),
