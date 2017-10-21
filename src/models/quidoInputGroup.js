@@ -4,6 +4,7 @@ const mongoose = require('mongoose'),
 
 const InputGroup = new Schema({
     _id: String,
+    caption: String,
     board: {
         type: String,
         required: true

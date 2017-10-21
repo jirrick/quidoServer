@@ -1,7 +1,6 @@
 'use strict';
 const express = require('express'),
     mongoose = require('mongoose'),
-    models = require('./models/quidoInit'),
     errorHandler = require('strong-error-handler'),
     pretty = require('express-prettify'),
     helmet = require('helmet'),

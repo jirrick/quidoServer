@@ -4,6 +4,7 @@ const mongoose = require('mongoose'),
 
 const Board = new Schema({
     _id: String,
+    caption: String,
     mac: String,
     inputs: Number,
     inputState: String,
