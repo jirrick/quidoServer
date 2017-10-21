@@ -11,7 +11,7 @@ exports.parse = async function (req, res) {
     try {
         const req_name = req.query.name;
         const req_mac = req.query.mac;
-        
+
         //load board info and populate groups
         const boardInfo = await Board.findOne({
             '_id': req_name,
@@ -20,10 +20,10 @@ exports.parse = async function (req, res) {
             .populate('outputGroups')
             .exec();
 
-        //array containing values to be subtracted from board counters
-        boardInfo.resetCounters = Array(boardInfo.inputs).fill(0);
-
         if (boardInfo != null) {
+            //array containing values to be subtracted from board counters
+            boardInfo.resetCounters = Array(boardInfo.inputs).fill(0);
+
             //parse counters into array
             const inputCounters = [];
             for (let i = 1; i <= boardInfo.inputs; i++) {
