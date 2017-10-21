@@ -1,7 +1,7 @@
 'use strict';
 
 const server = require('../server'),
-    QuidoData = require('../models/quidoData');
+    DataLog = require('../models/quidoDataLog');
 
 //Parse board request
 exports.parse = function (req, res) {
@@ -30,8 +30,8 @@ exports.parse = function (req, res) {
         temp.value = req.query.tempV;
         parsedInputs.push(temp);
 
-        //Create new QuidoData item and save to mongo
-        const newItem = new QuidoData({
+        //Create new DataLog item and save to mongo
+        const newItem = new DataLog({
             name: req.query.name,
             inputs: parsedInputs
         });

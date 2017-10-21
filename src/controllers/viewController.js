@@ -1,10 +1,10 @@
 'use strict';
 
-const QuidoData = require('../models/quidoData');
+const DataLog = require('../models/quidoDataLog');
 
 //View page - last N records
 exports.jsonAll = function (req, res) {
-    QuidoData.
+    DataLog.
         find({}).
         limit(getLimit(req)).
         sort('-_id').
@@ -28,7 +28,7 @@ exports.jsonAll = function (req, res) {
 
 //View page - last N temps
 exports.jsonTemp = function (req, res) {
-    QuidoData.
+    DataLog.
         find({}).
         limit(getLimit(req)).
         sort('-_id').
