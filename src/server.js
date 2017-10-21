@@ -5,6 +5,7 @@ const express = require('express'),
     errorHandler = require('strong-error-handler'),
     pretty = require('express-prettify'),
     helmet = require('helmet'),
+    bodyParser = require('body-parser'),
     config = require('./config'),
     Board = require('./class/boardClass'),
     routes = require('./routes/quidoRoutes'),
@@ -38,6 +39,8 @@ const logTimeFormat = () => (new Date()).toLocaleTimeString(),
 exports.logger = logger;
 
 //Set up middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(helmet());
 app.use(pretty({ query: 'pretty' }));
 app.use(errorHandler({
