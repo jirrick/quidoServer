@@ -13,7 +13,7 @@ exports.setValue = function (req, res) {
         return;
     }
 
-    //loop all boards
+    /* //loop all boards
     for (let board of server.boards) {
         // try set value
         const response = board.setOutput(name, value);
@@ -23,7 +23,7 @@ exports.setValue = function (req, res) {
             result = response;
             break;
         }
-    }
+    } */
     res.send(result);
 };
 
@@ -31,7 +31,7 @@ exports.getValue = function (req, res) {
     const name = req.params.name;
     let result = 0;
 
-    //loop all boards
+   /*  //loop all boards
     for (let board of server.boards) {
         // try get value
         const response = board.getValue(name);
@@ -40,6 +40,6 @@ exports.getValue = function (req, res) {
             result = response;
             break;
         }
-    }
+    } */
     res.send(result.toString());
 };

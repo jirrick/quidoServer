@@ -41,4 +41,51 @@ const InputGroup = new Schema({
     }
 });
 
+InputGroup.methods.parse = function (inputs, counters) {
+    let result = -1;
+
+    if (this.category === 'BINARY') {
+        // just parse state of defined input (convert index from one base to zero base)
+        const bitNumber = this.inputValue - 1;
+        result = parseInt(inputs[bitNumber]);
+    }
+    else if (this.category === 'COUNTER') {
+        // just parse state of defined counter (convert index from one base to zero base)
+        const bitNumber = this.inputValue - 1;
+        result = parseInt(counters[bitNumber]);
+    }
+    else if (this.category === 'ANALOG') { 
+        //get counter values (convert index from one base to zero base)
+        const cntBase = counters[this.inputBase - 1];
+        const cntValue = counters[this.inputValue - 1];
+
+        //parse only when base counter is over treshold
+        if (cntBase >= this.treshold) {
+            //TODO expression evaluation
+            result = ((cntValue / cntBase) - 1);
+        }
+    }
+    return result;
+};
+
+InputGroup.methods.resetValues = function(counters){
+    // by default do nothing
+    let result = Array(counters.length).fill(0);
+    if (this.category === 'ANALOG') {
+        //get counter values (convert index from one base to zero base)
+        const indexBase = this.inputBase - 1;
+        const indexValue = this.inputValue - 1;
+
+        const cntBase = counters[indexBase];
+        const cntValue = counters[indexValue];
+
+        //reset only when base counter is over treshold
+        if (cntBase >= this.treshold) {
+            result[indexBase] = cntBase;
+            result[indexValue] = cntValue;
+        }
+    }
+    return result;
+};
+
 module.exports = mongoose.model('InputGroup', InputGroup);
