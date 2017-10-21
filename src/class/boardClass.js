@@ -1,6 +1,6 @@
 const roundTo = require('round-to'),
     server = require('../server'),
-    QuidoCurrent = require('../models/quidoCurrent'),
+    quidoBoard = require('../models/quidoBoard'),
     OutputGroup = require('./outputGroup'),
     InputGroup = require('./inputGroup');
 
@@ -121,11 +121,10 @@ class Board {
 
     saveCurrentState(inputs, counters, outputs){
         //Update current status of board
-        QuidoCurrent.findByIdAndUpdate(this.name, {
-            inputs: inputs,
-            outputs: outputs,
-            raw_counters: counters,
-            values: [] //TODO
+        quidoBoard.findByIdAndUpdate(this.name, {
+            inputState: inputs,
+            outputState: outputs,
+            counters: counters
         }, { new: true, upsert: true }, function (err, data) {
             if (err)
                 server.logger.warn(err);
