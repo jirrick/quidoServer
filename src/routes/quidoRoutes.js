@@ -2,6 +2,7 @@
 
 const appController = require('../controllers/appController'),
     boardController = require('../controllers/boardController'),
+    configController = require('../controllers/configController'),
     viewController = require('../controllers/viewController'),
     outputController = require('../controllers/outputController');
 
@@ -30,15 +31,25 @@ module.exports = function (app) {
 
     //CONFIG - general
     app.route('/config')
-        .get(appController.jsonConfigItems);
+        .get(configController.jsonConfigItems);
 
     //CONFIG - boards
     app.route('/config/boards')
-        .get(appController.jsonGetBoards)
-        .post(appController.jsonPostBoard);
+        .get(configController.jsonGetBoards)
+        .post(configController.jsonPostBoard);
 
     app.route('/config/boards/:id')
-        .get(appController.jsonGetBoard)
-        .put(appController.jsonPutBoard)
-        .delete(appController.jsonDeleteBoard);
+        .get(configController.jsonGetBoard)
+        .put(configController.jsonPutBoard)
+        .delete(configController.jsonDeleteBoard);
+
+    /* //CONFIG - input groups
+    app.route('/config/inputs')
+        .get(configController.jsonGetInputs)
+        .post(configController.jsonPostInput);
+
+    app.route('/config/inputs/:id')
+        .get(configController.jsonGetInput)
+        .put(configController.jsonPutInput)
+        .delete(configController.jsonDeleteInput); */
 };
