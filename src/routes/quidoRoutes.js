@@ -23,4 +23,7 @@ module.exports = function (app) {
 
     app.route('/temps/:limit?')
         .get(viewController.jsonTemp);
+
+    app.route('/config')
+        .get(appController.jsonConfigItems);
 };
