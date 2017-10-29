@@ -29,27 +29,16 @@ module.exports = function (app) {
     app.route('/temps/:limit?')
         .get(viewController.jsonTemp);
 
-    //CONFIG - general
+    //CONFIG
     app.route('/config')
         .get(configController.jsonConfigItems);
 
-    //CONFIG - boards
-    app.route('/config/boards')
-        .get(configController.jsonGetBoards)
-        .post(configController.jsonPostBoard);
+    app.route('/config/:collection')
+        .get(configController.jsonGetAll)
+        .post(configController.jsonPostOne);
 
-    app.route('/config/boards/:id')
-        .get(configController.jsonGetBoard)
-        .put(configController.jsonPutBoard)
-        .delete(configController.jsonDeleteBoard);
-
-    /* //CONFIG - input groups
-    app.route('/config/inputs')
-        .get(configController.jsonGetInputs)
-        .post(configController.jsonPostInput);
-
-    app.route('/config/inputs/:id')
-        .get(configController.jsonGetInput)
-        .put(configController.jsonPutInput)
-        .delete(configController.jsonDeleteInput); */
+    app.route('/config/:collection/:id')
+        .get(configController.jsonGetOne)
+        .put(configController.jsonPutOne)
+        .delete(configController.jsonDeleteOne);
 };

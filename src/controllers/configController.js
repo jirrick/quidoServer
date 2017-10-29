@@ -20,107 +20,156 @@ exports.jsonConfigItems = async function (req, res, next) {
     }
 };
 
-//list all board configurations
-exports.jsonGetBoards = async function (req, res, next) {
+//list all configurations
+exports.jsonGetAll = async function (req, res, next) {
     try {
-        const result = await Board.find({})
-            .lean().select('-__v');
-        res.send(result);
-    } catch (err) {
-        errorController.handle(next, err);
-    }
-};
-
-//add new board configurations (id must be specified)
-exports.jsonPostBoard = async function (req, res, next) {
-    try {
-        //load data from request, content type must be JSON
-        const request = req.body;
-
-        //validate
-        if (!request._id) {
-            res.status(400).send('Board name (property "_id") not specified.');
-            return;
+        // load model by name
+        const model = getModel(req);
+        if (model) {
+            const result = await model.find({})
+                .lean().select('-__v');
+            res.send(result);
+        } else {
+            res.status(400).send('Unknown collection.');
         }
-
-        //save to db
-        const board = new Board();
-        Object.assign(board, request);
-        board.save()
-            .then(function (data) {
-                server.logger.verbose(`Received configuration for "${data._id}" board`);
-                server.logger.debug(data.toString());
-                res.status(200).send('Board data added succefully.');
-            })
-            .catch(function (err) {
-                server.logger.warn(err);
-                res.status(400).send('Failed to add board config. Content-Type must be set to JSON.');
-            });
     } catch (err) {
         errorController.handle(next, err);
     }
 };
 
-//return particular board configuration
-exports.jsonGetBoard = async function (req, res, next) {
+//add new configuration (id must be specified)
+exports.jsonPostOne = async function (req, res, next) {
     try {
-        const id = req.params.id;
-        const result = await Board.findById(id)
-            .lean().select('-__v');
-        res.send(result);
-    } catch (err) {
-        errorController.handle(next, err);
-    }
-};
+        // load model by name
+        const model = getModel(req);
+        if (model) {
+            //load data from request, content type must be JSON
+            const request = req.body;
 
-//updateparticular board configuration
-exports.jsonPutBoard = async function (req, res, next) {
-    try {
-        //find board
-        const id = req.params.id;
-        const board = await Board.findById(id);
+            //validate
+            if (!request._id) {
+                res.status(400).send('Item name (property "_id") not specified.');
+                return;
+            }
 
-        //load data from request (content type must be JSON) and update 
-        const request = req.body;
-        Object.assign(board, request);
-
-        //validate
-        if (request._id !== id) {
-            res.status(400).send('Object ID changed, update canceled.');
-            return;
+            //save to db
+            const item = new model();
+            Object.assign(item, request);
+            item.save()
+                .then(function (data) {
+                    const status = `${model.modelName} item "${data._id}" insterted succefully.`;
+                    server.logger.verbose(status);
+                    server.logger.debug(data.toString());
+                    res.status(200).send(status);
+                })
+                .catch(function (err) {
+                    server.logger.warn(err);
+                    res.status(400).send('Failed to add configuration. Content-Type must be set to JSON.');
+                });
+        } else {
+            res.status(400).send('Unknown collection.');
         }
-
-        //save board
-        board.save()
-            .then(function (data) {
-                server.logger.verbose(`Updated configuration for "${data._id}" board`);
-                server.logger.debug(data.toString());
-                res.status(200).send('Board data updated succefully.');
-            })
-            .catch(function (err) {
-                server.logger.warn(err);
-                res.status(400).send('Failed to update board config. Content-Type must be set to JSON.');
-            });
     } catch (err) {
         errorController.handle(next, err);
     }
 };
 
-//return particular board configuration
-exports.jsonDeleteBoard = async function (req, res, next) {
+//return particular configuration
+exports.jsonGetOne = async function (req, res, next) {
     try {
-        const id = req.params.id;
-        Board.findByIdAndRemove(id)
-            .then(function (data) {
-                server.logger.verbose(`Removed configuration for "${data._id}" board`);
-                server.logger.debug(data.toString());
-                res.status(200).send('Board data deleted succefully.');
-            })
-            .catch(function (err) {
-                server.logger.warn(err);
-                res.status(400).send('Failed to delete board config.');
-            });
+        // load model by name
+        const model = getModel(req);
+        if (model) {
+            const id = req.params.id;
+            const result = await model.findById(id)
+                .lean().select('-__v');
+            res.send(result);
+        } else {
+            res.status(400).send('Unknown collection.');
+        }
     } catch (err) {
         errorController.handle(next, err);
     }
 };
+
+//updateparticular configuration
+exports.jsonPutOne = async function (req, res, next) {
+    try {
+        // load model by name
+        const model = getModel(req);
+        if (model) {
+            //find item
+            const id = req.params.id;
+            const item = await model.findById(id);
+
+            //load data from request (content type must be JSON) and update 
+            const request = req.body;
+            Object.assign(item, request);
+
+            //validate
+            if (request._id !== id) {
+                res.status(400).send('Object ID changed, update canceled.');
+                return;
+            }
+
+            //save item
+            item.save()
+                .then(function (data) {
+                    const status = `${model.modelName} item "${data._id}" updated succefully.`;
+                    server.logger.verbose(status);
+                    server.logger.debug(data.toString());
+                    res.status(200).send(status);
+                })
+                .catch(function (err) {
+                    server.logger.warn(err);
+                    res.status(400).send('Failed to update configuration. Content-Type must be set to JSON.');
+                });
+        } else {
+            res.status(400).send('Unknown collection.');
+        }
+    } catch (err) {
+        errorController.handle(next, err);
+    }
+};
+
+//return particular configuration
+exports.jsonDeleteOne = async function (req, res, next) {
+    try {
+        // load model by name
+        const model = getModel(req);
+        if (model) {
+            const id = req.params.id;
+            model.findByIdAndRemove(id)
+                .then(function (data) {
+                    const status = `${model.modelName} item "${data._id}" deleted succefully.`;
+                    server.logger.verbose(status);
+                    server.logger.debug(data.toString());
+                    res.status(200).send(status);
+                })
+                .catch(function (err) {
+                    server.logger.warn(err);
+                    res.status(400).send(`Failed to delete ${model.modelName} item.`);
+                });
+        } else {
+            res.status(400).send('Unknown collection.');
+        }
+    } catch (err) {
+        errorController.handle(next, err);
+    }
+};
+
+// get Model by name for generic CRUD methods
+function getModel(req) {
+    const collection = req.params.collection;
+    let result = null;
+
+    if (collection.toUpperCase() === 'BOARD') {
+        result = Board;
+    } else if (collection.toUpperCase() === 'INPUTGROUP') {
+        result = InputGroup;
+    } else if (collection.toUpperCase() === 'OUTPUTGROUP') {
+        result = OutputGroup;
+    }
+
+    return result;
+}
