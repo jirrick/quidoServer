@@ -1,6 +1,7 @@
 'use strict';
 const mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    Parser = require('expr-eval').Parser;
 
 const InputGroup = new Schema({
     _id: String,
@@ -27,22 +28,14 @@ const InputGroup = new Schema({
         type: Number,
         required: false
     },
-    expression: { //how to calculate value (for analog only)
+    expression: { //how to calculate value (for analog only), must contain reference to Nref and Ncount
         type: String,
         required: false
-    },
-    parameters: { //used in expression (for analog only)
-        required: false,
-        type: [{ 
-            _id: false,
-            name: String,
-            value: Number
-        }]
     }
 });
 
 InputGroup.methods.parse = function (inputs, counters) {
-    let result = -1;
+    let result = Number.NaN;
 
     if (this.category === 'BINARY') {
         // just parse state of defined input (convert index from one base to zero base)
@@ -61,8 +54,11 @@ InputGroup.methods.parse = function (inputs, counters) {
 
         //parse only when base counter is over treshold
         if (cntBase >= this.treshold) {
-            //TODO expression evaluation
-            result = ((cntValue / cntBase) - 1);
+            const parser = new Parser();
+            //load expression
+            const expr = parser.parse(this.expression);
+            //do the calculation (Nref and Ncount are reserved parameters)
+            result = expr.evaluate({ Nref: cntBase, Ncount: cntValue});
         }
     }
     return result;

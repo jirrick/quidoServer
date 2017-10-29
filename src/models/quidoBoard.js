@@ -77,10 +77,10 @@ Board.methods.parseInput = function (inputs, counters) {
         //create input object
         const parsedValue = group.parse(inputs, counters);
 
-        //only add value when valid (larger than zero)
-        if (parsedValue >= 0) {
+        //only add value when valid
+        if (!Number.isNaN(parsedValue)) {
             const inputObject = {
-                name: group.name,
+                name: group._id,
                 value: roundTo(parsedValue, 1)
             };
             result.push(inputObject);
