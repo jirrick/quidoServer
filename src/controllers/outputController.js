@@ -1,9 +1,10 @@
 'use strict';
 
 const server = require('../server'),
-    OutputGroup = require('../models/quidoOutputGroup');
+    OutputGroup = require('../models/quidoOutputGroup'),
+    errorController = require('./errorController');
 
-exports.setValue = async function (req, res) {
+exports.setValue = async function (req, res, next) {
     try {
         const name = req.params.name;
         const value = parseInt(req.params.value);
@@ -38,11 +39,11 @@ exports.setValue = async function (req, res) {
         res.send(result);
         return result;
     } catch (err) {
-        server.logger.error(err);
+        errorController.handle(next, err);
     }
 };
 
-exports.getValue = async function (req, res) {
+exports.getValue = async function (req, res, next) {
     try {
         const name = req.params.name;
         let result = -1;
@@ -55,7 +56,7 @@ exports.getValue = async function (req, res) {
         }
         res.send(result.toString());
     } catch (err) {
-        server.logger.error(err);
+        errorController.handle(next, err);
     }
 
 };

@@ -2,10 +2,11 @@
 
 const server = require('../server'),
     Board = require('../models/quidoBoard'),
-    DataLog = require('../models/quidoDataLog');
+    DataLog = require('../models/quidoDataLog'),
+    errorController = require('./errorController');
 
 //Parse board request
-exports.parse = async function (req, res) {
+exports.parse = async function (req, res, next) {
     server.logger.debug(req.originalUrl);
 
     try {
@@ -36,6 +37,7 @@ exports.parse = async function (req, res) {
 
             //parse inputs
             const parsedInputs = boardInfo.parseInput(ins, inputCounters);
+
             //add temp to parsed inputs
             const temp = new Object();
             temp.name = 'temp';
@@ -43,16 +45,7 @@ exports.parse = async function (req, res) {
             parsedInputs.push(temp);
 
             //Create new DataLog item and save to mongo
-            const newItem = new DataLog({
-                name: req.query.name,
-                inputs: parsedInputs
-            });
-            newItem.save(function (err, data) {
-                if (err)
-                    server.logger.warn(err);
-                server.logger.verbose(`Received ${data.inputs.length} inputs from ${data.name} board`);
-                server.logger.debug(data.toString());
-            });
+            DataLog.logInputs(req.query.name, parsedInputs);
 
             //Update current status of board
             boardInfo.saveCurrentState(ins, inputCounters, outs);
@@ -67,6 +60,6 @@ exports.parse = async function (req, res) {
             res.status(400).send('Unknown board!');
 
     } catch (err) {
-        server.logger.error(err);
+        errorController.handle(next, err);
     }
 };
