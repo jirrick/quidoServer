@@ -60,7 +60,7 @@ typings/
 package-lock.json
 
 # do not commit real config
-config.js
+env.list
 
 # vscode launch config
 .vscode/launch.json

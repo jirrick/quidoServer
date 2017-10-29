@@ -1,29 +1,38 @@
 'use strict';
 const express = require('express'),
     mongoose = require('mongoose'),
-    models = require('./models/quidoModel'),
+    modelsInit = require('./models/quidoInit'),
     errorHandler = require('strong-error-handler'),
     pretty = require('express-prettify'),
     helmet = require('helmet'),
-    config = require('./config'),
-    boardClasses = require('./class/boardClasses'),
+    bodyParser = require('body-parser'),
     routes = require('./routes/quidoRoutes'),
+    winston = require('winston'),
     app = express(),
     environment = process.env.NODE_ENV || 'development',
-    port = process.env.PORT || 3001;
+    logLevel = process.env.CONSOLE_LEVEL || 'debug',
+    port = process.env.PORT || 3001,
+    mongoDB = process.env.MongoDB_CONN;
 
 //Set up default mongoose connection
 mongoose.Promise = global.Promise;
-mongoose.connect(config.mongoDB, { useMongoClient: true });
+mongoose.connect(mongoDB, { useMongoClient: true });
 
-//initialize boards
-let _boards = [];
-for (let _board of config.boards) {
-    _boards.push(new boardClasses.Board(_board));
-}
-exports.boards = _boards;
+//set up logger
+const logTimeFormat = () => (new Date()).toLocaleTimeString(),
+    logger = new (winston.Logger)({
+        transports: [
+            new (winston.transports.Console)({
+                timestamp: logTimeFormat,
+                level: logLevel
+            })
+        ]
+    });
+exports.logger = logger;
 
 //Set up middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(helmet());
 app.use(pretty({ query: 'pretty' }));
 app.use(errorHandler({
@@ -35,5 +44,5 @@ app.use(errorHandler({
 routes(app);
 app.listen(port);
 
-console.log('quido server started on: ' + port);
+logger.info('quido server started on: ' + port);
 

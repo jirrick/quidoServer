@@ -1,11 +1,10 @@
 'use strict';
 
-const mongoose = require('mongoose'),
-    Logs = mongoose.model('Logs');
+const DataLog = require('../models/quidoDataLog');
 
 //View page - last N records
 exports.jsonAll = function (req, res) {
-    Logs.
+    DataLog.
         find({}).
         limit(getLimit(req)).
         sort('-_id').
@@ -29,7 +28,7 @@ exports.jsonAll = function (req, res) {
 
 //View page - last N temps
 exports.jsonTemp = function (req, res) {
-    Logs.
+    DataLog.
         find({}).
         limit(getLimit(req)).
         sort('-_id').

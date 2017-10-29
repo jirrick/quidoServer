@@ -1,6 +1,6 @@
 {
     "parserOptions": {
-        "ecmaVersion": 6
+        "ecmaVersion": 8
     },
     "env": {
         "node": true
@@ -12,7 +12,7 @@
             4
         ],
         "linebreak-style": [
-            "warn",
+            "off",
             "unix"
         ],
         "quotes": [
