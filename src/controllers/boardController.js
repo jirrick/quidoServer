@@ -1,8 +1,7 @@
 'use strict';
 
 const logger = require('../logger'),
-    Board = require('../models/quidoBoard'),
-    DataLog = require('../models/quidoDataLog'),
+    quidoModels = require('../models/quidoModels'),
     errorController = require('./errorController');
 
 //Parse board request
@@ -14,7 +13,7 @@ exports.parse = async function (req, res, next) {
         const req_mac = req.query.mac;
 
         //load board info and populate groups
-        const boardInfo = await Board.findOne({
+        const boardInfo = await quidoModels.board.findOne({
             '_id': req_name,
             'mac': req_mac
         }).populate('inputGroups')
@@ -45,7 +44,7 @@ exports.parse = async function (req, res, next) {
             parsedInputs.push(temp);
 
             //Create new DataLog item and save to mongo
-            DataLog.logInputs(req.query.name, parsedInputs);
+            quidoModels.datalog.logInputs(req.query.name, parsedInputs);
 
             //Update current status of board
             boardInfo.saveCurrentState(ins, inputCounters, outs);
@@ -55,6 +54,9 @@ exports.parse = async function (req, res, next) {
             logger.debug(reply);
             res.set('Content-Type', 'text/xml');
             res.send(reply);
+
+            //process triggers
+            quidoModels.trigger.processTriggers(parsedInputs);
         }
         else
             res.status(400).send('Unknown board!');
