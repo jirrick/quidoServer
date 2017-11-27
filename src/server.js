@@ -1,34 +1,21 @@
 'use strict';
 const express = require('express'),
     mongoose = require('mongoose'),
-    modelsInit = require('./models/quidoInit'),
+    quidoModels = require('./models/quidoModels'),
+    logger = require('./logger'),
     errorHandler = require('strong-error-handler'),
     pretty = require('express-prettify'),
     helmet = require('helmet'),
     bodyParser = require('body-parser'),
     routes = require('./routes/quidoRoutes'),
-    winston = require('winston'),
     app = express(),
     environment = process.env.NODE_ENV || 'development',
-    logLevel = process.env.CONSOLE_LEVEL || 'debug',
     port = process.env.PORT || 3001,
     mongoDB = process.env.MongoDB_CONN;
 
 //Set up default mongoose connection
 mongoose.Promise = global.Promise;
 mongoose.connect(mongoDB, { useMongoClient: true });
-
-//set up logger
-const logTimeFormat = () => (new Date()).toLocaleTimeString(),
-    logger = new (winston.Logger)({
-        transports: [
-            new (winston.transports.Console)({
-                timestamp: logTimeFormat,
-                level: logLevel
-            })
-        ]
-    });
-exports.logger = logger;
 
 //Set up middleware
 app.use(bodyParser.urlencoded({ extended: true }));

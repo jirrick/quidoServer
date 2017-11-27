@@ -1,18 +1,17 @@
 'use strict';
 
-const server = require('../server'),
-    InputGroup = require('../models/quidoInputGroup'),
-    OutputGroup = require('../models/quidoOutputGroup'),
-    Board = require('../models/quidoBoard'),
+const logger = require('../logger'),
+    quidoModels = require('../models/quidoModels'),
     errorController = require('./errorController');
 
 //list names of all config items
 exports.jsonConfigItems = async function (req, res, next) {
     try {
         let result = new Object();
-        result.boards = await Board.find({}).lean().distinct('_id');
-        result.inputGroups = await InputGroup.find({}).lean().distinct('_id');
-        result.outputGroups = await OutputGroup.find({}).lean().distinct('_id');
+        result.boards = await quidoModels.board.find({}).lean().distinct('_id');
+        result.inputGroups = await quidoModels.inputGroup.find({}).lean().distinct('_id');
+        result.outputGroups = await quidoModels.outputGroup.find({}).lean().distinct('_id');
+        result.triggers = await quidoModels.trigger.find({}).lean().distinct('_id');
 
         res.send(result);
     } catch (err) {
@@ -58,12 +57,12 @@ exports.jsonPostOne = async function (req, res, next) {
             item.save()
                 .then(function (data) {
                     const status = `${model.modelName} item "${data._id}" insterted succefully.`;
-                    server.logger.verbose(status);
-                    server.logger.debug(data.toString());
+                    logger.verbose(status);
+                    logger.debug(data.toString());
                     res.status(200).send(status);
                 })
                 .catch(function (err) {
-                    server.logger.warn(err);
+                    logger.warn(err);
                     res.status(400).send('Failed to add configuration. Content-Type must be set to JSON.');
                 });
         } else {
@@ -116,12 +115,12 @@ exports.jsonPutOne = async function (req, res, next) {
             item.save()
                 .then(function (data) {
                     const status = `${model.modelName} item "${data._id}" updated succefully.`;
-                    server.logger.verbose(status);
-                    server.logger.debug(data.toString());
+                    logger.verbose(status);
+                    logger.debug(data.toString());
                     res.status(200).send(status);
                 })
                 .catch(function (err) {
-                    server.logger.warn(err);
+                    logger.warn(err);
                     res.status(400).send('Failed to update configuration. Content-Type must be set to JSON.');
                 });
         } else {
@@ -142,12 +141,12 @@ exports.jsonDeleteOne = async function (req, res, next) {
             model.findByIdAndRemove(id)
                 .then(function (data) {
                     const status = `${model.modelName} item "${data._id}" deleted succefully.`;
-                    server.logger.verbose(status);
-                    server.logger.debug(data.toString());
+                    logger.verbose(status);
+                    logger.debug(data.toString());
                     res.status(200).send(status);
                 })
                 .catch(function (err) {
-                    server.logger.warn(err);
+                    logger.warn(err);
                     res.status(400).send(`Failed to delete ${model.modelName} item.`);
                 });
         } else {
@@ -164,11 +163,13 @@ function getModel(req) {
     let result = null;
 
     if (collection.toUpperCase() === 'BOARD') {
-        result = Board;
+        result = quidoModels.board;
     } else if (collection.toUpperCase() === 'INPUTGROUP') {
-        result = InputGroup;
+        result = quidoModels.inputGroup;
     } else if (collection.toUpperCase() === 'OUTPUTGROUP') {
-        result = OutputGroup;
+        result = quidoModels.outputGroup;
+    } else if (collection.toUpperCase() === 'TRIGGER') {
+        result = quidoModels.trigger;
     }
 
     return result;

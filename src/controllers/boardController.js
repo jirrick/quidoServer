@@ -1,13 +1,13 @@
 'use strict';
 
-const server = require('../server'),
+const logger = require('../logger'),
     Board = require('../models/quidoBoard'),
     DataLog = require('../models/quidoDataLog'),
     errorController = require('./errorController');
 
 //Parse board request
 exports.parse = async function (req, res, next) {
-    server.logger.debug(req.originalUrl);
+    logger.debug(req.originalUrl);
 
     try {
         const req_name = req.query.name;
@@ -52,7 +52,7 @@ exports.parse = async function (req, res, next) {
 
             //send response
             const reply = boardInfo.getResponse();
-            server.logger.debug(reply);
+            logger.debug(reply);
             res.set('Content-Type', 'text/xml');
             res.send(reply);
         }

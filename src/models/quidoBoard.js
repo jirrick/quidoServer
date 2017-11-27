@@ -2,7 +2,7 @@
 const mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     roundTo = require('round-to'),
-    server = require('../server');
+    logger = require('../logger');
 
 const Board = new Schema(
     {
@@ -102,8 +102,8 @@ Board.methods.saveCurrentState = function (inputs, counters, outputs) {
     this.counters = counters;
     this.save(function (err, data) {
         if (err)
-            server.logger.warn(err);
-        server.logger.silly(data.toString());
+            logger.warn(err);
+        logger.silly(data.toString());
     });
 };
 

@@ -1,7 +1,7 @@
 'use strict';
 const mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    server = require('../server');
+    logger = require('../logger');
 
 const DataLog = new Schema({
     name: String,
@@ -21,11 +21,11 @@ DataLog.statics.logInputs = function(boardName, parsedInputs){
     });
     newLog.save()
         .then(function(data) {
-            server.logger.verbose(`Received ${data.inputs.length} inputs from ${data.name} board`);
-            server.logger.debug(data.toString());
+            logger.verbose(`Received ${data.inputs.length} inputs from ${data.name} board`);
+            logger.debug(data.toString());
         })
         .catch(function(err){
-            server.logger.warn(err);
+            logger.warn(err);
         });
 };
 

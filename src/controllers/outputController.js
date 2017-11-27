@@ -1,6 +1,6 @@
 'use strict';
 
-const server = require('../server'),
+const logger = require('../logger'),
     OutputGroup = require('../models/quidoOutputGroup'),
     errorController = require('./errorController');
 
@@ -27,7 +27,7 @@ exports.setValue = async function (req, res, next) {
                     group.value = value;
                     group.save();
                     const success = `output group "${name}" set to value "${value}"`;
-                    server.logger.debug(success);
+                    logger.debug(success);
                     result = success;
                 } else
                     result = 'value within bounds, but not reachable';
